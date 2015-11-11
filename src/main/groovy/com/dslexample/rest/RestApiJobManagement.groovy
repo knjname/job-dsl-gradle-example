@@ -114,6 +114,6 @@ class RestApiJobManagement extends MockJobManagement {
 
     private static String getPath(String name, boolean isView) {
         String path = "job/${name.replaceAll('/', '/job/')}"
-        isView ? path.replaceFirst('job/([^/]+)', 'view/$1') : path
+        isView ? path.replaceFirst('job/([^/]+)$', 'view/$1') : path
     }
 }
