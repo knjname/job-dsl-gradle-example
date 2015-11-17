@@ -77,7 +77,7 @@ class RestApiJobManagement extends MockJobManagement {
             int index = name.lastIndexOf('/')
             String folder = name[0..(index - 1)]
             job = name[(index + 1)..-1]
-            path = getPath(folder, isView) + '/createItem'
+            path = getPath(folder, false) + "/" + (isView ? 'createView' : 'createItem')
         } else {
             job = name
             path = isView ? 'createView' : 'createItem'
@@ -87,7 +87,7 @@ class RestApiJobManagement extends MockJobManagement {
             path: path,
             body: xml,
             query: [name: job],
-            requestContentType: 'application/xml'
+            requestContentType: 'application/xml; charset=UTF-8'
         )
 
         resp.status == 200
@@ -97,7 +97,7 @@ class RestApiJobManagement extends MockJobManagement {
         HttpResponseDecorator resp = restClient.post(
             path: getPath(name, isView) + '/config.xml',
             body: xml,
-            requestContentType: 'application/xml'
+            requestContentType: 'application/xml; charset=UTF-8'
         )
 
         resp.status == 200
@@ -113,6 +113,10 @@ class RestApiJobManagement extends MockJobManagement {
     }
 
     private static String getPath(String name, boolean isView) {
-        isView ? "view/$name" : "job/${name.replaceAll('/', '/job/')}"
+        String path = "job/${name.replaceAll('/', '/job/')}"
+        if (isView) {
+        	path = path.replaceFirst('job/([^/]+)$', 'view/$1')
+        }
+        path
     }
 }
